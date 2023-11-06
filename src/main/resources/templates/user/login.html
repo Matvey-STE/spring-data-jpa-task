@@ -1,5 +1,5 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Login</title>
 </head>
@@ -13,6 +13,10 @@
     <input type="password" id="password" name="password" required><br><br>
 
     <button type="submit">Login</button>
+</form>
+<br>
+<form action="/users/registration">
+    <button type="submit">Registration</button>
 </form>
 </body>
 </html>

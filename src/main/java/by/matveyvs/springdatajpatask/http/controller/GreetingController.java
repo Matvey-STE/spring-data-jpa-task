@@ -13,8 +13,14 @@ import java.util.List;
 @SessionAttributes({"user"})
 public class GreetingController {
     @ModelAttribute("roles")
-    public List<Role> getRoles(){
+    public List<Role> getRoles() {
         return Arrays.asList(Role.values());
+    }
+
+    @GetMapping("/hello")
+    public String hello(UserTestDto userTestDto, Model model) {
+        model.addAttribute("user", userTestDto);
+        return "greeting/hello";
     }
 
     @GetMapping("/hello/{id}")
@@ -29,7 +35,7 @@ public class GreetingController {
     }
 
     @GetMapping("/bye")
-    public String bye(@SessionAttribute ("user") UserTestDto user) {
+    public String bye(@SessionAttribute("user") UserTestDto user) {
         return "greeting/bye";
     }
 }

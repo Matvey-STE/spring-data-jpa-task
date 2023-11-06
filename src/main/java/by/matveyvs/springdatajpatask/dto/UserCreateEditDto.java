@@ -11,6 +11,7 @@ import java.time.LocalDate;
 @FieldNameConstants
 public class UserCreateEditDto {
     String username;
+    String password;
     @DateTimeFormat(pattern = "dd-MM-yyyy")
     LocalDate birthDate;
     String firstname;

@@ -15,8 +15,8 @@ public class UserCreateEditMapper implements Mapper<UserCreateEditDto, User> {
     private final CompanyRepository companyRepository;
 
     @Override
-    public User map(UserCreateEditDto fromObject, User toObject){
-        copy(fromObject,toObject);
+    public User map(UserCreateEditDto fromObject, User toObject) {
+        copy(fromObject, toObject);
         return toObject;
     }
 
@@ -29,6 +29,7 @@ public class UserCreateEditMapper implements Mapper<UserCreateEditDto, User> {
 
     private void copy(UserCreateEditDto object, User user) {
         user.setUsername(object.getUsername());
+        user.setPassword(object.getPassword());
         user.setFirstname(object.getFirstname());
         user.setLastname(object.getLastname());
         user.setBirthDate(object.getBirthDate());

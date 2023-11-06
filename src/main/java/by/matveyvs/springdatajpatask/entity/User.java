@@ -22,6 +22,7 @@ public class User implements BaseEntity<Long> {
 
     @Column(unique = true, nullable = false)
     private String username;
+    private String password;
 
     private LocalDate birthDate;
 
