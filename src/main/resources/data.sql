@@ -18,7 +18,7 @@ VALUES ('1990-01-10', 'Ivan', 'Ivanov', 'ADMIN', 'ivan@gmail.com', '123',
         (SELECT id FROM company WHERE name = 'Google')),
        ('2001-12-23', 'Sveta', 'Svetikova', 'USER', 'sveta@gmail.com', '123',
         (SELECT id FROM company WHERE name = 'Meta')),
-       ('1984-03-14', 'Vlad', 'Vladikov', 'USER', 'vlad@gmail.com', '123',
+       ('1984-03-15', 'Vlad', 'Vladikov', 'USER', 'vlad@gmail.com', '123',
         (SELECT id FROM company WHERE name = 'Amazon')),
        ('1984-03-14', 'Kate', 'Smith', 'ADMIN', 'kate@gmail.com', '123',
         (SELECT id FROM company WHERE name = 'Amazon'));
