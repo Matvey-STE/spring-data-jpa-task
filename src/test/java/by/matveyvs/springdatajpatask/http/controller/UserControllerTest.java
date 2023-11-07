@@ -43,13 +43,14 @@ class UserControllerTest {
     @Test
     void create() throws Exception {
         mockMvc.perform(post("/users")
-                .param(username, "test@mail.ru")
-                .param(firstname, "test")
-                .param(lastname, "test")
-                .param(role, "ADMIN")
-                .param(companyId, "1")
-                .param(birthDate, "01-01-2000")
-        )
+                        .param(username, "test@mail.ru")
+                        .param(password, "123")
+                        .param(firstname, "test")
+                        .param(lastname, "test")
+                        .param(role, "ADMIN")
+                        .param(companyId, "1")
+                        .param(birthDate, "01-01-2000")
+                )
                 .andExpectAll(
                         status().is3xxRedirection(),
                         redirectedUrlPattern("/users/{\\d+}")
@@ -60,7 +61,8 @@ class UserControllerTest {
     void update() throws Exception {
         Long userId = 1L;
         mockMvc.perform(post("/users/{id}/update", userId)
-                        .param("username", "test@mail.ru"))
+                        .param("username", "test@mail.ru")
+                        .param("password", "123"))
                 .andExpectAll(
                         status().is3xxRedirection(),
                         redirectedUrlPattern("/users/{\\d+}")

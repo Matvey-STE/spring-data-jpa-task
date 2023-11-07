@@ -23,7 +23,6 @@ class UserServiceTest {
 
     @Test
     void findAll() {
-
         List<UserReadDto> all = userService.findAll();
         assertEquals(5, all.size());
     }
@@ -39,6 +38,7 @@ class UserServiceTest {
     void create() {
         UserCreateEditDto userDto = new UserCreateEditDto(
                 "test@test.com",
+                "password",
                 LocalDate.now(),
                 "Test",
                 "Test",
@@ -47,6 +47,7 @@ class UserServiceTest {
         );
         UserReadDto actualResult = userService.create(userDto);
         assertEquals(userDto.getUsername(), actualResult.getUsername());
+        assertEquals(userDto.getPassword(), actualResult.getPassword());
         assertEquals(userDto.getBirthDate(), actualResult.getBirthDate());
         assertEquals(userDto.getFirstname(), actualResult.getFirstname());
         assertEquals(userDto.getLastname(), actualResult.getLastname());
@@ -58,6 +59,7 @@ class UserServiceTest {
     void update() {
         UserCreateEditDto userDto = new UserCreateEditDto(
                 "test@test.com",
+                "password",
                 LocalDate.now(),
                 "Test",
                 "Test",
@@ -68,6 +70,7 @@ class UserServiceTest {
         assertTrue(actualResult.isPresent());
         actualResult.ifPresent(actual -> {
             assertEquals(userDto.getUsername(), actual.getUsername());
+            assertEquals(userDto.getPassword(), actual.getPassword());
             assertEquals(userDto.getBirthDate(), actual.getBirthDate());
             assertEquals(userDto.getFirstname(), actual.getFirstname());
             assertEquals(userDto.getLastname(), actual.getLastname());
