@@ -38,10 +38,23 @@ public class User implements BaseEntity<Long> {
     private Company company;
 
     @Builder.Default
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<UserImage> userImages = new ArrayList<>();
+
+    @Builder.Default
     @OneToMany(mappedBy = "receiver", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Payment> payments = new ArrayList<>();
 
     @Builder.Default
     @OneToMany(mappedBy = "user")
     private List<UserChat> userChats = new ArrayList<>();
+
+    public void addUserImage(UserImage userImage) {
+        userImages.add(userImage);
+        userImage.setUser(this);
+    }
+    public void removeUserImage(UserImage userImage){
+        userImages.remove(userImage);
+        userImage.setUser(null);
+    }
 }

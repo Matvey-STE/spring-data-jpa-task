@@ -21,7 +21,15 @@ CREATE TABLE IF NOT EXISTS users
     firstname  VARCHAR(64),
     lastname   VARCHAR(64),
     role       VARCHAR(32),
-    company_id INT REFERENCES company (id) ON DELETE CASCADE
+    company_id INT REFERENCES company (id) ON DELETE CASCADE,
+    image varchar(128)
+);
+
+CREATE TABLE IF NOT EXISTS user_image
+(
+    id  BIGSERIAL PRIMARY KEY,
+    image varchar (128),
+    user_id BIGINT REFERENCES users (id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS payment

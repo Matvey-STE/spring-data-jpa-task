@@ -13,7 +13,7 @@ import java.util.Map;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "company")
+@Table
 public class Company implements BaseEntity<Integer> {
 
     @Id
