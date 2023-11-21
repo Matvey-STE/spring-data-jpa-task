@@ -12,10 +12,4 @@ public class ControllerExceptionHandler {
         log.info(exception.getMessage());
         return "/error/age";
     }
-    @ExceptionHandler(value = Exception.class)
-    public String handleAllExceptions(Exception exception){
-        log.info(exception.getMessage());
-        return "/error/error";
-    }
-
 }

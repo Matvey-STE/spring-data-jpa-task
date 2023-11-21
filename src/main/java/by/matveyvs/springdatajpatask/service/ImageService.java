@@ -1,7 +1,6 @@
 package by.matveyvs.springdatajpatask.service;
 
 import lombok.SneakyThrows;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
@@ -12,8 +11,8 @@ import java.util.Optional;
 
 @Service
 public class ImageService {
-    @Value(value = "${app.image.bucket}")
-    private static String bucket;
+//    @Value(value = "${app.image.bucket}")
+    private String bucket = "/Users/matvey/MyProjects/spring-data-jpa-task/images";
 
     @SneakyThrows
     public void upload(String imagePath, InputStream content) {

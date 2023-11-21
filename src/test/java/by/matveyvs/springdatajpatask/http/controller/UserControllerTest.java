@@ -62,7 +62,8 @@ class UserControllerTest {
         Long userId = 1L;
         mockMvc.perform(post("/users/{id}/update", userId)
                         .param("username", "test@mail.ru")
-                        .param("password", "123"))
+                        .param("password", "123")
+                        .param("birthDate", "1984-03-14"))
                 .andExpectAll(
                         status().is3xxRedirection(),
                         redirectedUrlPattern("/users/{\\d+}")
@@ -72,12 +73,13 @@ class UserControllerTest {
     @Test
     void delete() throws Exception {
         Long failUserId = -1L;
-        Long successUserId = 1L;
+
         mockMvc.perform(post("/users/{id}/delete", failUserId))
                 .andExpectAll(
                         status().is4xxClientError()
                 );
 
+        Long successUserId = 1L;
         mockMvc.perform(post("/users/{id}/delete", successUserId))
                 .andExpectAll(
                         status().is3xxRedirection(),
