@@ -47,6 +47,7 @@ class LoginControllerTest {
                 "firstName",
                 "lastName",
                 Role.USER,
+                null,
                 null
         );
     }
@@ -59,6 +60,7 @@ class LoginControllerTest {
                 "firstName",
                 "lastName",
                 Role.ADMIN,
+                null,
                 null
         );
     }

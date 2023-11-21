@@ -23,12 +23,10 @@ public class User implements BaseEntity<Long> {
     @Column(unique = true, nullable = false)
     private String username;
     private String password;
-
     private LocalDate birthDate;
-
     private String firstname;
-
     private String lastname;
+    private String image;
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -53,7 +51,8 @@ public class User implements BaseEntity<Long> {
         userImages.add(userImage);
         userImage.setUser(this);
     }
-    public void removeUserImage(UserImage userImage){
+
+    public void removeUserImage(UserImage userImage) {
         userImages.remove(userImage);
         userImage.setUser(null);
     }
