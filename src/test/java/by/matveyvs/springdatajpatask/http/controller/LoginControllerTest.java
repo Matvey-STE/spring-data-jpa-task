@@ -10,8 +10,14 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 
 import static by.matveyvs.springdatajpatask.dto.UserCreateEditDto.Fields.*;
@@ -48,7 +54,7 @@ class LoginControllerTest {
                 "lastName",
                 Role.USER,
                 null,
-                null
+                getMultipartFile()
         );
     }
 
@@ -61,7 +67,7 @@ class LoginControllerTest {
                 "lastName",
                 Role.ADMIN,
                 null,
-                null
+                getMultipartFile()
         );
     }
 
@@ -70,6 +76,7 @@ class LoginControllerTest {
         mockMvc.perform(post("/login")
                         .param(username, userReadDtoUser.getUsername())
                         .param(password, userReadDtoUser.getPassword())
+                        .param(image, userReadDtoUser.getImage())
                 )
                 .andExpectAll(
                         status().is3xxRedirection(),
@@ -82,10 +89,26 @@ class LoginControllerTest {
         mockMvc.perform(post("/login")
                         .param(username, userReadDtoAdmin.getUsername())
                         .param(password, userReadDtoAdmin.getPassword())
+                        .param(image, userReadDtoAdmin.getImage())
                 )
                 .andExpectAll(
                         status().is3xxRedirection(),
                         redirectedUrl("/users")
                 );
+    }
+
+    public MultipartFile getMultipartFile() {
+        Path path = Paths.get("/Users/matvey/MyProjects/spring-data-jpa-task/src/test/resources/testObject/bg-1.jpeg");
+        String name = "bg-1.jpeg";
+        String originalFileName = "bg-1.jpeg";
+        String contentType = "jpeg/plain";
+        byte[] content = null;
+        try {
+            content = Files.readAllBytes(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new MockMultipartFile(name,
+                originalFileName, contentType, content);
     }
 }

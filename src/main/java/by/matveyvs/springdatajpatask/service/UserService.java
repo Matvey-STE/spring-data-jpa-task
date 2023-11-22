@@ -1,9 +1,13 @@
 package by.matveyvs.springdatajpatask.service;
 
 import by.matveyvs.springdatajpatask.dto.UserCreateEditDto;
+import by.matveyvs.springdatajpatask.dto.UserImageCreateEditDto;
+import by.matveyvs.springdatajpatask.dto.UserImageReadDto;
 import by.matveyvs.springdatajpatask.dto.UserReadDto;
 import by.matveyvs.springdatajpatask.entity.User;
+import by.matveyvs.springdatajpatask.entity.UserImage;
 import by.matveyvs.springdatajpatask.mapper.UserCreateEditMapper;
+import by.matveyvs.springdatajpatask.mapper.UserImageReadMapper;
 import by.matveyvs.springdatajpatask.mapper.UserReadMapper;
 import by.matveyvs.springdatajpatask.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +25,11 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class UserService {
     private final ImageService imageService;
+    private final UserImageReadMapper userImageReadMapper;
+    private final UserImageService userImageService;
     private final UserRepository userRepository;
     private final UserReadMapper userReadMapper;
+
     private final UserCreateEditMapper userCreateEditMapper;
 
     public List<UserReadDto> findAll() {
@@ -45,7 +52,7 @@ public class UserService {
     public UserReadDto create(UserCreateEditDto userDto) {
         return Optional.of(userDto)
                 .map(entity -> {
-//                    uploadImage(userDto.getImage());
+                    uploadImage(userDto.getImage());
                     return userCreateEditMapper.map(userDto);
                 })
                 .map(userRepository::save)
@@ -57,7 +64,7 @@ public class UserService {
     public Optional<UserReadDto> update(Long id, UserCreateEditDto userDto) {
         return userRepository.findById(id)
                 .map(entity -> {
-//                    uploadImage(userDto.getImage());
+                    uploadImage(userDto.getImage());
                     return userCreateEditMapper.map(userDto, entity);
                 })
                 .map(userRepository::saveAndFlush)
@@ -77,7 +84,34 @@ public class UserService {
                 .filter(StringUtils::hasText)
                 .flatMap(imageService::get);
     }
+    @Transactional
+    @SneakyThrows
+    public Long addUserImage(Long userId, MultipartFile image) {
+        uploadImage(image);
+        UserImageReadDto userImageReadDto = userImageService.create(new UserImageCreateEditDto(image, userId));
+        UserImage map = userImageReadMapper.map(userImageReadDto);
+        userRepository.findById(userId)
+                .map(user -> {
+                    user.addUserImage(map);
+                    return userRepository.saveAndFlush(user);
+                });
+        return map.getId();
+    }
+    @Transactional
+    public Optional<UserReadDto> removeUserImage(Long userId, Long userImageId) {
+        var userImage =
+                userImageService.findById(userImageId)
+                        .map(userImageReadMapper::map).orElseThrow();
 
+        return userRepository.findById(userId)
+                .map(user -> {
+                    user.removeUserImage(userImage);
+                    userImageService.deleteById(userImageId);
+                    userRepository.saveAndFlush(user);
+                    return user;
+                })
+                .map(userReadMapper::map);
+    }
 
     @Transactional
     public boolean deleteById(Long id) {

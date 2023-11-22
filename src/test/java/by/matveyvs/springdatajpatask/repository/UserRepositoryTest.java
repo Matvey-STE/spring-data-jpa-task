@@ -66,8 +66,8 @@ class UserRepositoryTest {
         var pageable = PageRequest.of(0, 1, sort);
 
         var page = userRepository.findAllByRole(Role.USER, pageable);
-        assertEquals(3, page.getTotalPages());
-        assertEquals(3, page.getTotalElements());
+        assertEquals(2, page.getTotalPages());
+        assertEquals(2, page.getTotalElements());
         page.forEach(user -> assertEquals(Role.USER, user.getRole()));
         while (page.hasNext()) {
             page = userRepository.findAllByRole(Role.USER, page.nextPageable());
@@ -81,8 +81,8 @@ class UserRepositoryTest {
         var pageable = PageRequest.of(0, 1, sort);
 
         var page = userRepository.findAllByRole(Role.ADMIN, pageable);
-        assertEquals(2, page.getTotalPages());
-        assertEquals(2, page.getTotalElements());
+        assertEquals(3, page.getTotalPages());
+        assertEquals(3, page.getTotalElements());
         page.forEach(user -> assertEquals(Role.ADMIN, user.getRole()));
         while (page.hasNext()) {
             page = userRepository.findAllByRole(Role.USER, page.nextPageable());
@@ -95,8 +95,8 @@ class UserRepositoryTest {
         var sort = Sort.by("id");
         var pageable = PageRequest.of(0, 2, sort);
         var page = userRepository.findAllByRole(Role.USER, pageable);
-        assertEquals(2, page.getTotalPages());
-        assertEquals(3, page.getTotalElements());
+        assertEquals(1, page.getTotalPages());
+        assertEquals(2, page.getTotalElements());
         page.forEach(user -> assertEquals(Role.USER, user.getRole()));
         while (page.hasNext()) {
             page = userRepository.findAllByRole(Role.USER, page.nextPageable());

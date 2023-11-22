@@ -58,7 +58,7 @@ public class UserController {
                          BindingResult bindingResult,
                          RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            if(isValidHasAgeRestriction(bindingResult)){
+            if (isValidHasAgeRestriction(bindingResult)) {
                 throw new IllegalAgeException();
             }
             redirectAttributes.addFlashAttribute("user", user);
@@ -68,10 +68,11 @@ public class UserController {
         var userReadDto = userService.create(user);
         return "redirect:/users/" + userReadDto.getId();
     }
-    private boolean isValidHasAgeRestriction(BindingResult bindingResult){
+
+    private boolean isValidHasAgeRestriction(BindingResult bindingResult) {
         List<ObjectError> allErrors = bindingResult.getAllErrors();
-        for (ObjectError error : allErrors){
-            if (Objects.equals(error.getCode(), "AdultRestriction")){
+        for (ObjectError error : allErrors) {
+            if (Objects.equals(error.getCode(), "AdultRestriction")) {
                 return true;
             }
         }
@@ -80,9 +81,9 @@ public class UserController {
 
     @PostMapping("/{id}/update")
     public String update(@PathVariable("id") Long id,
-                         @ModelAttribute @Validated UserCreateEditDto user) {
+                         @ModelAttribute UserCreateEditDto user) {
         return userService.update(id, user)
-                .map(it -> "redirect:/users/{id}")
+                .map(updatedUser -> "redirect:/users/" + id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 

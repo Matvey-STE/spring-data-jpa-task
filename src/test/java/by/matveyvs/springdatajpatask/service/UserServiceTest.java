@@ -2,15 +2,18 @@ package by.matveyvs.springdatajpatask.service;
 
 import by.matveyvs.springdatajpatask.config.IT;
 import by.matveyvs.springdatajpatask.dto.UserCreateEditDto;
+import by.matveyvs.springdatajpatask.dto.UserImageReadDto;
 import by.matveyvs.springdatajpatask.dto.UserReadDto;
 import by.matveyvs.springdatajpatask.entity.Role;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -24,7 +27,7 @@ class UserServiceTest {
     private static final Integer COMPANY_ID = 1;
 
     private final UserService userService;
-    private static final String STRING_TEST = "TEST STRING";
+    private static final String STRING_TEST = "bg-1.jpeg";
 
     @Test
     void findAll() {
@@ -93,47 +96,49 @@ class UserServiceTest {
         assertTrue(userService.deleteById(USER_ID));
     }
 
+    @Test
+    void addImageToList() {
+        var imageId = userService.addUserImage(USER_ID, getMultipartFile());
+        assertNotNull(imageId);
+        Optional<UserReadDto> userReadDto = userService.findById(USER_ID);
+        var userImageList = userReadDto.get().getUserImageReadDtoList();
+        Optional<UserImageReadDto> first = userImageList.stream()
+                .filter(image -> image.getId().equals(imageId))
+                .findFirst();
+        assertEquals(getMultipartFile().getOriginalFilename(), first.get().getImage());
+        for (UserImageReadDto userImageReadDto : userImageList) {
+            System.out.println("Image is " + userImageReadDto.getImage());
+        }
+        assertFalse(userImageList.isEmpty());
+    }
+
+    @Test
+    void removeImageFromList() {
+        var userImageId = userService.addUserImage(USER_ID, getMultipartFile());
+        Optional<UserReadDto> userReadDto = userService.findById(USER_ID);
+        assertTrue(userReadDto.isPresent());
+        System.out.println(userImageId);
+        userService.removeUserImage(USER_ID, userImageId)
+                .ifPresent(user -> {
+                    List<UserImageReadDto> list = user.getUserImageReadDtoList().stream()
+                            .filter(image -> image.getId().equals(userImageId)).toList();
+                    assertTrue(list.isEmpty());
+                });
+
+    }
+
     public MultipartFile getMultipartFile() {
-        return new MultipartFile() {
-            @Override
-            public String getName() {
-                return null;
-            }
-
-            @Override
-            public String getOriginalFilename() {
-                return STRING_TEST;
-            }
-
-            @Override
-            public String getContentType() {
-                return null;
-            }
-
-            @Override
-            public boolean isEmpty() {
-                return false;
-            }
-
-            @Override
-            public long getSize() {
-                return 0;
-            }
-
-            @Override
-            public byte[] getBytes() throws IOException {
-                return new byte[0];
-            }
-
-            @Override
-            public InputStream getInputStream() throws IOException {
-                return null;
-            }
-
-            @Override
-            public void transferTo(File dest) throws IOException, IllegalStateException {
-
-            }
-        };
+        Path path = Paths.get("/Users/matvey/MyProjects/spring-data-jpa-task/src/test/resources/testObject/bg-1.jpeg");
+        String name = "bg-1.jpeg";
+        String originalFileName = STRING_TEST;
+        String contentType = "jpeg/plain";
+        byte[] content = null;
+        try {
+            content = Files.readAllBytes(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new MockMultipartFile(name,
+                originalFileName, contentType, content);
     }
 }

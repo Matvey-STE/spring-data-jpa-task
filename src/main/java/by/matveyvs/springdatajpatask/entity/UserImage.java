@@ -1,12 +1,11 @@
 package by.matveyvs.springdatajpatask.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
+@ToString(exclude = {"user"})
+@EqualsAndHashCode(exclude = {"user"})
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -17,7 +16,7 @@ public class UserImage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String image;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 }
