@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User</title>
+</head>
+<body>
+<form th:action="@{/users/{userId}/userImages/addImage(userId = ${user.get().getId()})}" enctype="multipart/form-data" method="post">
+    <label for="image">Image:
+        <input id="image" type="file" name="image">
+    </label>
+    <br><br>
+    <button type="submit">Add New Picture</button>
+</form><br>
+
+<table>
+    <thead>
+    <tr>
+        <th>Image</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <div th:if="${not imageList.isEmpty()}">
+        <div th:each="image : ${imageList}">
+            <tr>
+                <td>
+                    <div> Image:
+                        <img width="200" th:src="@{/api/v1/userImages/{imageId}/pics(imageId=${image.getId()})}" alt="images">
+                    </div>
+                </td>
+                <td>
+                    <form th:action="@{'/users/' + ${user.get().getId()} + '/userImages/' + ${image.getId()}+'/removeImage'}" method="post">
+                        <button type="submit">Remove Picture From List</button>
+                    </form>
+                </td>
+            </tr>
+        </div>
+    </div>
+    </tbody>
+</table><br>
+
+<style>
+    table {
+        border-collapse: collapse;
+        width: 50%;
+    }
+
+    th, td {
+        border: 2px solid #000000;
+        text-align: left;
+        padding: 8px;
+    }
+</style>
+</body>
+</html>

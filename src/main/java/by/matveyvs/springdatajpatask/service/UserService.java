@@ -29,7 +29,6 @@ public class UserService {
     private final UserImageService userImageService;
     private final UserRepository userRepository;
     private final UserReadMapper userReadMapper;
-
     private final UserCreateEditMapper userCreateEditMapper;
 
     public List<UserReadDto> findAll() {
@@ -84,6 +83,7 @@ public class UserService {
                 .filter(StringUtils::hasText)
                 .flatMap(imageService::get);
     }
+
     @Transactional
     @SneakyThrows
     public Long addUserImage(Long userId, MultipartFile image) {
@@ -97,6 +97,7 @@ public class UserService {
                 });
         return map.getId();
     }
+
     @Transactional
     public Optional<UserReadDto> removeUserImage(Long userId, Long userImageId) {
         var userImage =

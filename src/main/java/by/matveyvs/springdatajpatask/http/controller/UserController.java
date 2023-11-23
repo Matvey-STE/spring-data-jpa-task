@@ -1,9 +1,11 @@
 package by.matveyvs.springdatajpatask.http.controller;
 
 import by.matveyvs.springdatajpatask.dto.UserCreateEditDto;
+import by.matveyvs.springdatajpatask.dto.UserImageCreateEditDto;
 import by.matveyvs.springdatajpatask.entity.Role;
 import by.matveyvs.springdatajpatask.exception.IllegalAgeException;
 import by.matveyvs.springdatajpatask.service.CompanyService;
+import by.matveyvs.springdatajpatask.service.UserImageService;
 import by.matveyvs.springdatajpatask.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,6 +25,7 @@ import java.util.Objects;
 @RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
+    private final UserImageService userImageService;
     private final UserService userService;
     private final CompanyService companyService;
 
@@ -42,6 +45,15 @@ public class UserController {
                     return "user/user";
                 })
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+    @GetMapping("/{userId}/userImages")
+    public String findUserImagesByUserId(@PathVariable("userId") Long id,
+                                         Model model) {
+        model.addAttribute("user", userService.findById(id));
+        model.addAttribute("imageList", userImageService.findAllByUserId(id));
+
+        return "/user/userImage";
     }
 
     @GetMapping("/registration")
@@ -84,7 +96,24 @@ public class UserController {
                          @ModelAttribute UserCreateEditDto user) {
         return userService.update(id, user)
                 .map(updatedUser -> "redirect:/users/" + id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Update failed"));
+    }
+
+    @PostMapping("/{userId}/userImages/addImage")
+    public String addImage(@PathVariable("userId") Long id,
+                           @ModelAttribute UserImageCreateEditDto imageCreateEditDto) {
+        if(!imageCreateEditDto.getImage().isEmpty()){
+            userService.addUserImage(id, imageCreateEditDto.getImage());
+        }
+        return "redirect:/users/" + id + "/userImages";
+    }
+
+    @PostMapping("/{userId}/userImages/{imageId}/removeImage")
+    public String removeImage(@PathVariable("userId") Long userId,
+                              @PathVariable("imageId") Long imageId,
+                              @ModelAttribute UserImageCreateEditDto imageCreateEditDto) {
+        userService.removeUserImage(userId, imageId);
+        return "redirect:/users/" + userId + "/userImages";
     }
 
     @PostMapping("/{id}/delete")

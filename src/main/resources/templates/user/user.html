@@ -47,5 +47,11 @@
       th:if="${user.role.name() == 'ADMIN'}" method="post">
     <button type="submit">Remove</button>
 </form>
+<br><br>
+
+<form th:action="@{/users/{userId}/userImages(userId=${user.id})}" method="get">
+    <button type="submit">Show Images</button>
+</form>
+
 </body>
 </html>
