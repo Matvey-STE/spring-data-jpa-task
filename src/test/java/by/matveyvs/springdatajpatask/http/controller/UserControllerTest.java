@@ -1,25 +1,17 @@
 package by.matveyvs.springdatajpatask.http.controller;
 
 import by.matveyvs.springdatajpatask.config.IT;
-import by.matveyvs.springdatajpatask.dto.UserCreateEditDto;
 import lombok.RequiredArgsConstructor;
 import org.hamcrest.collection.IsCollectionWithSize;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import static by.matveyvs.springdatajpatask.dto.UserCreateEditDto.Fields.*;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @IT
@@ -69,20 +61,43 @@ class UserControllerTest {
     @Test
     void update() throws Exception {
         Long userId = 1L;
-        mockMvc.perform(post("/users/{id}/update", userId)
-                        .param(UserCreateEditDto.Fields.username, "test@mail.ru")
-                        .param(UserCreateEditDto.Fields.password, "123")
-                        .param(UserCreateEditDto.Fields.firstname, "test")
-                        .param(UserCreateEditDto.Fields.lastname, "test")
-                        .param(UserCreateEditDto.Fields.role, "USER")
+        MockMultipartFile file = new MockMultipartFile(
+                "image",
+                "test-image.jpg",
+                "image/jpeg",
+                "some image data".getBytes()
+        );
+        mockMvc.perform(multipart("/users/{userId}/update", userId)
+                        .file(file)
+                        .param(username, "test@mail.ru")
+                        .param(password, "123")
+                        .param(firstname, "test")
+                        .param(lastname, "test")
+                        .param(role, "USER")
                         .param(companyId, "2")
-                        .param(UserCreateEditDto.Fields.birthDate, "02-01-2000")
-                        .param(UserCreateEditDto.Fields.image, "test")
+                        .param(birthDate, "02-01-2000")
                 )
                 .andExpectAll(
                         status().is3xxRedirection(),
-                        redirectedUrlPattern("/users/{\\d+}")
+                        redirectedUrl("/users/" + userId)
                 );
+    }
+
+    @Test
+    void addUserImage() throws Exception {
+        Long userId = 1L;
+        MockMultipartFile file = new MockMultipartFile(
+                "image",           // This should match the parameter name in your controller method
+                "test-image.jpg",  // File name
+                "image/jpeg",      // Content type
+                "some image data".getBytes()  // File content
+        );
+        mockMvc.perform(multipart("/users/{userId}/userImages/addImage", userId)
+                .file(file)
+        ).andExpectAll(
+                status().is3xxRedirection(),
+                redirectedUrlPattern("/users/{\\d+}/userImages")
+        );
     }
 
     @Test
@@ -100,20 +115,5 @@ class UserControllerTest {
                         status().is3xxRedirection(),
                         redirectedUrl("/users")
                 );
-    }
-
-    public MultipartFile getMultipartFile() {
-        Path path = Paths.get("/Users/matvey/MyProjects/spring-data-jpa-task/src/test/resources/testObject/bg-1.jpeg");
-        String name = "bg-1.jpeg";
-        String originalFileName = "bg-1.jpeg";
-        String contentType = "jpeg/plain";
-        byte[] content = null;
-        try {
-            content = Files.readAllBytes(path);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return new MockMultipartFile(name,
-                originalFileName, contentType, content);
     }
 }

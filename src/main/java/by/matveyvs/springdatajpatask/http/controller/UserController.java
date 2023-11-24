@@ -81,6 +81,14 @@ public class UserController {
         return "redirect:/users/" + userReadDto.getId();
     }
 
+    @PostMapping("/{userId}/update")
+    public String update(@ModelAttribute @Validated UserCreateEditDto user,
+                         @PathVariable("userId") Long userId) {
+        return userService.update(userId, user)
+                .map(updatedUser -> "redirect:/users/" + userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Update failed"));
+    }
+
     private boolean isValidHasAgeRestriction(BindingResult bindingResult) {
         List<ObjectError> allErrors = bindingResult.getAllErrors();
         for (ObjectError error : allErrors) {
@@ -91,21 +99,13 @@ public class UserController {
         return false;
     }
 
-    @PostMapping("/{id}/update")
-    public String update(@PathVariable("id") Long id,
-                         @ModelAttribute UserCreateEditDto user) {
-        return userService.update(id, user)
-                .map(updatedUser -> "redirect:/users/" + id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Update failed"));
-    }
-
     @PostMapping("/{userId}/userImages/addImage")
-    public String addImage(@PathVariable("userId") Long id,
-                           @ModelAttribute UserImageCreateEditDto imageCreateEditDto) {
-        if(!imageCreateEditDto.getImage().isEmpty()){
-            userService.addUserImage(id, imageCreateEditDto.getImage());
+    public String addImage(@PathVariable("userId") Long userId,
+                           @Validated @ModelAttribute UserImageCreateEditDto imageCreateEditDto) {
+        if (!imageCreateEditDto.getImage().isEmpty()) {
+            userService.addUserImage(userId, imageCreateEditDto.getImage());
         }
-        return "redirect:/users/" + id + "/userImages";
+        return "redirect:/users/" + userId + "/userImages";
     }
 
     @PostMapping("/{userId}/userImages/{imageId}/removeImage")
